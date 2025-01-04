@@ -1,0 +1,4 @@
+server/envs/** filter=git-crypt diff=git-crypt
+client/.env filter=git-crypt diff=git-crypt
+client/.env.local filter=git-crypt diff=git-crypt
+client/.env.prod filter=git-crypt diff=git-crypt
