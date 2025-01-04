@@ -1,9 +1,13 @@
 import { Module } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { appConfig } from '../../configs';
+import { PrismaService } from './prisma.service';
+import { SeedService } from './seed.service';
 
 @Module({
     providers: [
+        PrismaService,
+        SeedService,
         {
             provide: 'UserJwtService',
             useFactory: () => {
@@ -23,6 +27,6 @@ import { appConfig } from '../../configs';
         //     }
         // }
     ],
-    exports: ['UserJwtService']
+    exports: ['UserJwtService', PrismaService]
 })
 export class SharedModule {}

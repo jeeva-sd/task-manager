@@ -1,0 +1,92 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "mysql"
+    url      = env("DATABASE_URL")
+}
+
+model users {
+    id        String   @id @default(cuid())
+    email     String   @unique
+    name      String
+    password  String?
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    organizations user_org_roles[]
+    teams         team_members[]
+
+    @@index([email])
+    @@map("users")
+}
+
+model organizations {
+    id        String   @id @default(cuid())
+    name      String
+    createdAt DateTime @default(now())
+
+    users user_org_roles[]
+    teams teams[]
+
+    @@map("organizations")
+}
+
+model roles {
+    id          String  @id @default(cuid())
+    name        String  @unique
+    description String?
+    permissions Json?
+
+    user_org_roles user_org_roles[]
+
+    @@map("roles")
+}
+
+model user_org_roles {
+    userId    String
+    orgId     String
+    roleId    String
+    createdAt DateTime @default(now())
+
+    user         users         @relation(fields: [userId], references: [id])
+    organization organizations @relation(fields: [orgId], references: [id])
+    role         roles         @relation(fields: [roleId], references: [id])
+
+    @@id([userId, orgId])
+    @@map("user_org_roles")
+}
+
+model teams {
+    id          String   @id @default(cuid())
+    orgId       String
+    name        String
+    description String?
+    createdAt   DateTime @default(now())
+
+    organization organizations  @relation(fields: [orgId], references: [id])
+    members      team_members[]
+
+    @@index([orgId])
+    @@map("teams")
+}
+
+model team_members {
+    userId    String
+    teamId    String
+    role      team_roles
+    createdAt DateTime   @default(now())
+
+    user users @relation(fields: [userId], references: [id])
+    team teams @relation(fields: [teamId], references: [id])
+
+    @@id([userId, teamId])
+    @@map("team_members")
+}
+
+enum team_roles {
+    MEMBER
+    LEADER
+    MANAGER
+}

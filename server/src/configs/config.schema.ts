@@ -44,6 +44,23 @@ const corsConfigRule = yup.object().shape({
     credentials: yup.boolean().required()
 });
 
+// ------------------------------------------- database -----------------------------------------------------
+
+const sqlRule = yup.object().shape({
+    host: yup
+        .string()
+        .required()
+        .matches(/^localhost$|^([a-zA-Z0-9.-]+)$/, 'Invalid sql host format'),
+    port: yup.number().required().min(1).max(65535).integer(),
+    username: yup.string().required().min(1),
+    password: yup.string().required().min(1),
+    database: yup.string().required().min(1),
+    connectionLimit: yup.number().default(10),
+    seedDatabase: yup.boolean().default(false)
+});
+
+const databaseRule = yup.object().shape({ sql: sqlRule });
+
 // ----------------------------------------------------------------------------------------------------------
 
 export const AppConfigRule = yup.object().shape({
@@ -51,7 +68,8 @@ export const AppConfigRule = yup.object().shape({
     cors: corsConfigRule,
     auth: authConfigRule,
     payloadValidation: payloadConfigRule,
-    multiPart: multipartConfigRule
+    multiPart: multipartConfigRule,
+    database: databaseRule
 });
 
 // ------------------------------------------------------------------------------------------------------------------
